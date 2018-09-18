@@ -1,0 +1,105 @@
+openapi: 3.0.1
+info:
+  title: 'Base Rate'
+  version: '0.1-dev'
+  description: ''
+  contact:
+    name: 'Khairul Fathi'
+    email: 'khairulfathi@gmail.com'
+servers:
+  - url: 'https://api.sample.com'
+    description: 'Production server URL'
+  - url: 'https://api.test.sample.com'
+    description: 'Staging server URL'
+paths:
+  /base-rate:
+    get:
+      summary: 'Retrieve latest Base Rate from all financial institutions'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Latest Base Rate All Banks'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                      effective_date:
+                        type: string
+                        format: date
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        bank_code:
+                          type: string
+                          maximum: 4
+                        bank_name:
+                          type: string
+                          maximum: 125
+                        base_rate:
+                          type: number
+                          format: float
+                        base_financing_rate:
+                          type: number
+                          format: float
+                        indicative_eff_lending_rate:
+                          type: number
+                          format: float
+  /base-rate/{bank_code}:
+    get:
+      summary: 'Retrieve latest Base Rate from specified financial institution'
+      parameters: 
+        - in: path
+          name: bank_code
+          required: true
+          schema:
+            type: string
+            maximum: 4
+          description: 'First 4 characters of SWIFT code'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Latest Base Rate All Banks'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                      effective_date:
+                        type: string
+                        format: date
+                  data:
+                    type: object
+                    properties:
+                      bank_code:
+                        type: string
+                        maximum: 4
+                      bank_name:
+                        type: string
+                        maximum: 125
+                      base_rate:
+                        type: number
+                        format: float
+                      base_financing_rate:
+                        type: number
+                        format: float
+                      indicative_eff_lending_rate:
+                        type: number
+                        format: float
+        404:
+          description: 'Result not found'
+        
