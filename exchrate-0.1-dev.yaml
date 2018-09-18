@@ -1,0 +1,94 @@
+openapi: 3.0.1
+info:
+  title: 'Exchange Rates'
+  version: '0.1-dev'
+  description: ''
+  contact:
+    name: 'Khairul Fathi'
+    email: 'khairulfathi@gmail.com'
+servers:
+  - url: 'https://api.sample.com'
+    description: 'Production server URL'
+  - url: 'https://api.test.sample.com'
+    description: 'Staging server URL'
+paths:
+  /exchange-rate:
+    get:
+      summary: 'Retrieve latest Exchange Rates for major currencies'
+      parameters: 
+        - in: query
+          name: session
+          schema:
+            type: string
+            format: time
+            enum:
+              - 0900
+              - 1130
+              - 1200
+              - 1700
+            default: 1130
+          description: 'Session of published rate. Rates at 1130 are the best rates offered by selected commercial banks.'
+        - in: query
+          name: quote
+          schema:
+            type: integer
+            enum:
+              - 1
+              - 2
+            default: 1
+          description: 'Quotation for exchange rates. Acceptable values: 1 = Ringgit/Foreign Currency, 2 = Foreign Currency/Ringgit.'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Latest Exchange Rates for Major Currencies'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                      date:
+                        type: string
+                        format: date
+                      session:
+                        type: string
+                        format: time
+                      quote:
+                        type: integer
+                        enum:
+                          - 1
+                          - 2
+                      total_result:
+                        type: integer
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        currency_code:
+                          type: string
+                          maximum: 3
+                        unit:
+                          type: integer
+                          enum:
+                            - 1
+                            - 100
+                          default: 1
+                        buying_rate:
+                          type : number
+                          format: float
+                        selling_rate:
+                          type : number
+                          format: float
+                        middle_rate:
+                          type : number
+                          format: float                          
+                                  
+        404:
+          description: 'Result not found'
+        
