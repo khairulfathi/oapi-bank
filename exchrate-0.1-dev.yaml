@@ -21,98 +21,31 @@ paths:
           schema:
             type: string
             maximum: 3
-          description: '3 characters currency code based on ISO 4217 standard'      
-        - in: query
-          name: session
-          schema:
-            type: string
-            format: time
-            enum:
-              - 0900
-              - 1130
-              - 1200
-              - 1700
-            default: 1130
-          description: 'Session of published rate. Rates at 1130 are the best rates offered by selected commercial banks.'
-        - in: query
-          name: quote
-          schema:
-            type: integer
-            enum:
-              - 1
-              - 2
-            default: 1
-          description: 'Quotation for exchange rates. Acceptable values: 1 = Ringgit/Foreign Currency, 2 = Foreign Currency/Ringgit.'
+          description: '3 characters currency code based on ISO 4217 standard'
+        - $ref: '#/components/parameters/session'
+        - $ref: '#/components/parameters/quote'
+        
       responses:
         200:
           description: 'Successful response'
           content:
             application/json:
               schema:
-                title: 'Latest Exchange Rates for Major Currencies'
-                type: object
-                properties:
-                  meta:
-                    type: object
-                    properties:
-                      last_updated:
-                        type: string
-                        format: datetime
-                      session:
-                        type: string
-                        format: time
-                      quote:
-                        type: integer
-                        enum:
-                          - 1
-                          - 2
-                      total_result:
-                        type: integer
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        currency_code:
-                          type: string
-                          maximum: 3
-                        unit:
-                          type: integer
-                          enum:
-                            - 1
-                            - 100
-                          default: 1
-                        rate:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              date:
-                                type: string
-                                format: date
-                              buying_rate:
-                                type : number
-                                format: float
-                              selling_rate:
-                                type : number
-                                format: float
-                              middle_rate:
-                                type : number
-                                format: float                          
-                                  
-        404:
+                $ref: '#/components/schemas/Response'
+        204:
           description: 'Result not found'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
   /exchange-rate/{currency_code}/date/{date}:
     get:
       summary: 'Retrieve Exchange Rates based on specified currency code and date'
       parameters: 
-        - in: path
-          name: currency_code
-          required: true
-          schema:
-            type: string
-            maximum: 3
-          description: '3 characters currency code based on ISO 4217 standard'
+        - $ref: '#/components/parameters/currency_code'
         - in: path
           name: date
           required: true
@@ -120,106 +53,30 @@ paths:
             type: string
             format: date
           description: 'Date in YYYY-MM-DD format'
-        - in: query
-          name: session
-          schema:
-            type: string
-            format: time
-            enum:
-              - 0900
-              - 1130
-              - 1200
-              - 1700
-            default: 1130
-          description: 'Session of published rate. Rates at 1130 are the best rates offered by selected commercial banks.'
-        - in: query
-          name: quote
-          schema:
-            type: integer
-            enum:
-              - 1
-              - 2
-            default: 1
-          description: 'Quotation for exchange rates. Acceptable values: 1 = Ringgit/Foreign Currency, 2 = Foreign Currency/Ringgit.'
+        - $ref: '#/components/parameters/session'
+        - $ref: '#/components/parameters/quote'
+        
       responses:
         200:
           description: 'Successful response'
           content:
             application/json:
               schema:
-                title: 'Exchange Rates on Particular Date'
-                type: object
-                properties:
-                  meta:
-                    type: object
-                    properties:
-                      last_updated:
-                        type: string
-                        format: datetime
-                      session:
-                        type: string
-                        format: time
-                      quote:
-                        type: integer
-                        enum:
-                          - 1
-                          - 2
-                      total_result:
-                        type: integer
-                  query:
-                    type: object
-                    properties:
-                      currency_code:
-                        type: string
-                        maximum: 3
-                      date:
-                        type: string
-                        format: date
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        currency_code:
-                          type: string
-                          maximum: 3
-                        unit:
-                          type: integer
-                          enum:
-                            - 1
-                            - 100
-                          default: 1
-                        rate:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              date:
-                                type: string
-                                format: date
-                              buying_rate:
-                                type : number
-                                format: float
-                              selling_rate:
-                                type : number
-                                format: float
-                              middle_rate:
-                                type : number
-                                format: float                          
-
-        404:
+                $ref: '#/components/schemas/Response'
+        204:
           description: 'Result not found'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
   /exchange-rate/{currency_code}/year/{year}/month/{month}:
     get:
       summary: 'Retrieve Exchange Rates based on specified currency code, year and month'
       parameters: 
-        - in: path
-          name: currency_code
-          required: true
-          schema:
-            type: string
-            maximum: 3
-          description: '3 characters currency code based on ISO 4217 standard'
+        - $ref: '#/components/parameters/currency_code'
         - in: path
           name: year
           required: true
@@ -234,92 +91,138 @@ paths:
           schema:
             type: integer
           description: 'Month in numeric format. Acceptable values: 1 - 12.'
-        - in: query
-          name: session
-          schema:
-            type: string
-            format: time
-            enum:
-              - 0900
-              - 1130
-              - 1200
-              - 1700
-            default: 1130
-          description: 'Session of published rate. Rates at 1130 are the best rates offered by selected commercial banks.'
-        - in: query
-          name: quote
-          schema:
-            type: integer
-            enum:
-              - 1
-              - 2
-            default: 1
-          description: 'Quotation for exchange rates. Acceptable values: 1 = Ringgit/Foreign Currency, 2 = Foreign Currency/Ringgit.'
+        - $ref: '#/components/parameters/session'
+        - $ref: '#/components/parameters/quote'
+
       responses:
         200:
           description: 'Successful response'
           content:
             application/json:
               schema:
-                title: 'Exchange Rates on Given Month and Year'
-                type: object
-                properties:
-                  meta:
-                    type: object
-                    properties:
-                      last_updated:
-                        type: string
-                        format: datetime
-                      session:
-                        type: string
-                        format: time
-                      quote:
-                        type: integer
-                        enum:
-                          - 1
-                          - 2
-                      total_result:
-                        type: integer
-                  query:
-                    type: object
-                    properties:
-                      currency_code:
-                        type: string
-                        maximum: 3
-                      year:
-                        type: integer
-                      month:
-                        type: integer
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        currency_code:
-                          type: string
-                          maximum: 3
-                        unit:
-                          type: integer
-                          enum:
-                            - 1
-                            - 100
-                          default: 1
-                        rate:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              date:
-                                type: string
-                                format: date
-                              buying_rate:
-                                type : number
-                                format: float
-                              selling_rate:
-                                type : number
-                                format: float
-                              middle_rate:
-                                type : number
-                                format: float
-        404:
-          description: 'Result not found'          
+                $ref: '#/components/schemas/Response'
+        204:
+          description: 'Result not found'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'  
+
+components:
+  parameters:
+    currency_code:
+      name: currency_code
+      in: path
+      required: true
+      schema:
+        type: string
+        maximum: 3
+      description: '3 characters currency code based on ISO 4217 standard'    
+    session:
+      name: session
+      in: query
+      schema:
+        type: string
+        format: time
+        enum:
+          - 0900
+          - 1130
+          - 1200
+          - 1700
+        default: 1130
+      description: 'Session of published rate. Rates at 1130 are the best rates offered by selected commercial banks.'
+    quote:
+      name: quote
+      in: query
+      schema:
+        type: integer
+        enum:
+          - 1
+          - 2
+        default: 1
+      description: 'Quotation for exchange rates. Acceptable values: 1 = Ringgit/Foreign Currency, 2 = Foreign Currency/Ringgit.'    
+    
+  schemas:
+    Response:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        query:
+          $ref: '#/components/schemas/Query'
+        data:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Currency'
+    Rate:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        buying_rate:
+          type : number
+          format: float
+        selling_rate:
+          type : number
+          format: float
+        middle_rate:
+          type : number
+          format: float
+    Currency:
+      type: object
+      properties:
+        currency_code:
+          type: string
+          maximum: 3
+        unit:
+          type: integer
+          enum:
+            - 1
+            - 100
+          default: 1
+        rate:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rate'
+    Query:
+      type: object
+      properties:
+        currency_code:
+          type: string
+          maximum: 3
+        date:
+          type: string
+          format: date
+        year:
+          type: integer
+        month:
+          type: integer
+    Meta:
+      type: object
+      properties:
+        last_updated:
+          type: string
+          format: datetime
+        session:
+          type: string
+          format: time
+        quote:
+          type: integer
+          enum:
+            - 1
+            - 2
+        total_result:
+          type: integer
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          maximum: 3
+        mesage:
+          type: string
+          maximum: 50
