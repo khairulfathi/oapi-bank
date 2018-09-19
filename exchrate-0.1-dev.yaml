@@ -17,6 +17,12 @@ paths:
       summary: 'Retrieve latest Exchange Rates for major currencies'
       parameters: 
         - in: query
+          name: curency_code
+          schema:
+            type: string
+            maximum: 3
+          description: '3 characters currency code based on ISO 4217 standard'      
+        - in: query
           name: session
           schema:
             type: string
@@ -52,9 +58,6 @@ paths:
                       last_updated:
                         type: string
                         format: datetime
-                      date:
-                        type: string
-                        format: date
                       session:
                         type: string
                         format: time
@@ -79,16 +82,244 @@ paths:
                             - 1
                             - 100
                           default: 1
-                        buying_rate:
-                          type : number
-                          format: float
-                        selling_rate:
-                          type : number
-                          format: float
-                        middle_rate:
-                          type : number
-                          format: float                          
+                        rate:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              date:
+                                type: string
+                                format: date
+                              buying_rate:
+                                type : number
+                                format: float
+                              selling_rate:
+                                type : number
+                                format: float
+                              middle_rate:
+                                type : number
+                                format: float                          
                                   
         404:
           description: 'Result not found'
-        
+  /exchange-rate/{currency_code}/date/{date}:
+    get:
+      summary: 'Retrieve Exchange Rates based on specified currency code and date'
+      parameters: 
+        - in: path
+          name: currency_code
+          required: true
+          schema:
+            type: string
+            maximum: 3
+          description: '3 characters currency code based on ISO 4217 standard'
+        - in: path
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+          description: 'Date in YYYY-MM-DD format'
+        - in: query
+          name: session
+          schema:
+            type: string
+            format: time
+            enum:
+              - 0900
+              - 1130
+              - 1200
+              - 1700
+            default: 1130
+          description: 'Session of published rate. Rates at 1130 are the best rates offered by selected commercial banks.'
+        - in: query
+          name: quote
+          schema:
+            type: integer
+            enum:
+              - 1
+              - 2
+            default: 1
+          description: 'Quotation for exchange rates. Acceptable values: 1 = Ringgit/Foreign Currency, 2 = Foreign Currency/Ringgit.'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Exchange Rates on Particular Date'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                      session:
+                        type: string
+                        format: time
+                      quote:
+                        type: integer
+                        enum:
+                          - 1
+                          - 2
+                      total_result:
+                        type: integer
+                  query:
+                    type: object
+                    properties:
+                      currency_code:
+                        type: string
+                        maximum: 3
+                      date:
+                        type: string
+                        format: date
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        currency_code:
+                          type: string
+                          maximum: 3
+                        unit:
+                          type: integer
+                          enum:
+                            - 1
+                            - 100
+                          default: 1
+                        rate:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              date:
+                                type: string
+                                format: date
+                              buying_rate:
+                                type : number
+                                format: float
+                              selling_rate:
+                                type : number
+                                format: float
+                              middle_rate:
+                                type : number
+                                format: float                          
+
+        404:
+          description: 'Result not found'
+  /exchange-rate/{currency_code}/year/{year}/month/{month}:
+    get:
+      summary: 'Retrieve Exchange Rates based on specified currency code, year and month'
+      parameters: 
+        - in: path
+          name: currency_code
+          required: true
+          schema:
+            type: string
+            maximum: 3
+          description: '3 characters currency code based on ISO 4217 standard'
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+            minimum: 1900
+            maximum: 2019
+          description: 'Year in four digits format'
+        - in: path
+          name: month
+          required: true
+          schema:
+            type: integer
+          description: 'Month in numeric format. Acceptable values: 1 - 12.'
+        - in: query
+          name: session
+          schema:
+            type: string
+            format: time
+            enum:
+              - 0900
+              - 1130
+              - 1200
+              - 1700
+            default: 1130
+          description: 'Session of published rate. Rates at 1130 are the best rates offered by selected commercial banks.'
+        - in: query
+          name: quote
+          schema:
+            type: integer
+            enum:
+              - 1
+              - 2
+            default: 1
+          description: 'Quotation for exchange rates. Acceptable values: 1 = Ringgit/Foreign Currency, 2 = Foreign Currency/Ringgit.'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Exchange Rates on Given Month and Year'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                      session:
+                        type: string
+                        format: time
+                      quote:
+                        type: integer
+                        enum:
+                          - 1
+                          - 2
+                      total_result:
+                        type: integer
+                  query:
+                    type: object
+                    properties:
+                      currency_code:
+                        type: string
+                        maximum: 3
+                      year:
+                        type: integer
+                      month:
+                        type: integer
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        currency_code:
+                          type: string
+                          maximum: 3
+                        unit:
+                          type: integer
+                          enum:
+                            - 1
+                            - 100
+                          default: 1
+                        rate:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              date:
+                                type: string
+                                format: date
+                              buying_rate:
+                                type : number
+                                format: float
+                              selling_rate:
+                                type : number
+                                format: float
+                              middle_rate:
+                                type : number
+                                format: float
+        404:
+          description: 'Result not found'          
