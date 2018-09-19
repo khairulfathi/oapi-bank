@@ -1,0 +1,131 @@
+openapi: 3.0.1
+info:
+  title: 'Financial Consumer Alert'
+  version: '0.1-dev'
+  description: ''
+  contact:
+    name: 'Khairul Fathi'
+    email: 'khairulfathi@gmail.com'
+servers:
+  - url: 'https://api.sample.com'
+    description: 'Production server URL'
+  - url: 'https://api.test.sample.com'
+    description: 'Staging server URL'
+paths:
+  /consumer-alert:
+    get:
+      summary: 'Retrieve latest list of Financial Consumer Alert'
+      
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        204:
+          description: 'Result not found'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /consumer-alert/{str}:
+    get:
+      summary: 'Search string in Financial Consumer Alert list'
+      parameters: 
+        - in: path
+          name: str
+          required: true
+          schema:
+            type: string
+        
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        204:
+          description: 'Result not found'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+
+
+components:
+  parameters:
+    str:
+      name: str
+      in: path
+      required: true
+      schema:
+        type: string
+        maximum: 3
+      description: '3 characters currency code based on ISO 4217 standard'    
+    
+  schemas:
+    Response:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        query:
+          $ref: '#/components/schemas/Query'
+        data:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Profile'
+    Profile:
+      type: object
+      properties:
+        name:
+          type: string
+          maximum: 255
+        registration_number:
+          type: string
+        added_date:
+          type: string
+          format: date
+        website:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Website'
+    Website:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+    Query:
+      type: object
+      properties:
+        str:
+          type: string
+    Meta:
+      type: object
+      properties:
+        last_updated:
+          type: string
+          format: datetime
+        total_result:
+          type: integer          
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          maximum: 3
+        mesage:
+          type: string
+          maximum: 50
+          
