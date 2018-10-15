@@ -1,0 +1,128 @@
+openapi: 3.0.1
+info:
+  title: 'Kuala Lumpur USD/MYR Reference Rate'
+  version: '0.1-dev'
+  description: 'A reference rate that is computed based on weighted average volume of the interbank USD/MYR FX spot rate transacted by the domestic financial institutions and published daily at 3:30 p.m.'
+  contact:
+    name: 'Khairul Fathi'
+    email: 'khairulfathi@gmail.com'
+servers:
+  - url: 'https://api.sample.com'
+    description: 'Production server URL'
+  - url: 'https://api.test.sample.com'
+    description: 'Staging server URL'
+paths:
+  /usdmyr:
+    get:
+      summary: 'Retrieve latest USD/MYR reference rate'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Latest USD/MYR reference rate'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                  data:
+                    type: object
+                    properties:
+                      date:
+                        type: string
+                        format: date
+                      rate:
+                        type: number
+                        format: float
+
+  /usdrmyr/date/{date}:
+    get:
+      summary: 'Retrieve latest USD/MYR Reference Rate based on given date'
+      parameters: 
+        - in: path
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+          description: 'Date to retrieve in YYYY-MM-DD format'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'USD/MYR reference rate on given date'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                  data:
+                    type: object
+                    properties:
+                      date:
+                        type: string
+                        format: date
+                      rate:
+                        type: number
+                        format: float
+        404:
+          description: 'Result not found'
+        
+  /usdrmyr/year/{year}/month/{month}:
+    get:
+      summary: 'Retrieve latest USD/MYR Reference Rate based on given month and year'
+      parameters: 
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+            maximum: 4
+          description: 'Year in numeric four digits'
+        - in: path
+          name: month
+          required: true
+          schema:
+            type: integer
+            maximum: 2
+          description: 'Month in numeric two digits'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'USD/MYR reference rate on given month and year'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                      count:
+                        type: integer
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          format: date
+                        rate:
+                          type: number
+                          format: float
+        404:
+          description: 'Result not found'
