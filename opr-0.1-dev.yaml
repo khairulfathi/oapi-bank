@@ -1,0 +1,93 @@
+openapi: 3.0.1
+info:
+  title: 'Overnight Policy Rate (OPR)'
+  version: '0.1-dev'
+  description: 'Overnight Policy Rate (OPR) decided by the Monetary Policy Committee'
+  contact:
+    name: 'Khairul Fathi'
+    email: 'khairulfathi@gmail.com'
+servers:
+  - url: 'https://api.sample.com'
+    description: 'Production server URL'
+  - url: 'https://api.test.sample.com'
+    description: 'Staging server URL'
+paths:
+  /opr:
+    get:
+      summary: 'Retrieve latest OPR'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Latest OPR'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                  data:
+                    type: object
+                    properties:
+                      year:
+                        type: integer
+                        maximum: 4
+                      date:
+                        type: string
+                        format: date
+                      change_in_opr:
+                        type: number
+                        format: float
+                      new_opr_level:
+                        type: number
+                        format: float
+  /opr/{year}:
+    get:
+      summary: 'Retrieve OPR level based on given year'
+      parameters: 
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+            maximum: 4
+          description: 'Year in numeric four digits'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Latest Base Rate All Banks'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        year:
+                          type: integer
+                          maximum: 4
+                        date:
+                          type: string
+                          format: date
+                        change_in_opr:
+                          type: number
+                          format: float
+                        new_opr_level:
+                          type: number
+                          format: float                      
+
+        404:
+          description: 'Result not found'
