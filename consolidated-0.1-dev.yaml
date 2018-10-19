@@ -1,0 +1,585 @@
+openapi: 3.0.1
+info:
+  title: 'Exchange Rates'
+  version: '0.1-dev'
+  description: ''
+  contact:
+    name: 'Khairul Fathi'
+    email: 'khairulfathi@gmail.com'
+servers:
+  - url: 'https://api.sample.com'
+    description: 'Production server URL'
+  - url: 'https://api.test.sample.com'
+    description: 'Staging server URL'
+paths:
+  /exchange-rate:
+    get:
+      summary: 'Retrieve latest Exchange Rates for major currencies'
+      tags:
+        - 'Exchange Rate'
+      parameters:
+        - in: query
+          name: curency_code
+          schema:
+            type: string
+            maximum: 3
+          description: '3 characters currency code based on ISO 4217 standard'
+        - $ref: '#/components/parameters/session'
+        - $ref: '#/components/parameters/quote'
+
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        204:
+          description: 'Result not found'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /exchange-rate/{currency_code}/date/{date}:
+    get:
+      summary: 'Retrieve Exchange Rates based on specified currency code and date'
+      tags:
+        - 'Exchange Rate'
+      parameters:
+        - $ref: '#/components/parameters/currency_code'
+        - in: path
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+          description: 'Date in YYYY-MM-DD format'
+        - $ref: '#/components/parameters/session'
+        - $ref: '#/components/parameters/quote'
+
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        204:
+          description: 'Result not found'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /exchange-rate/{currency_code}/year/{year}/month/{month}:
+    get:
+      summary: 'Retrieve Exchange Rates based on specified currency code, year and month'
+      tags:
+        - 'Exchange Rate'
+      parameters:
+        - $ref: '#/components/parameters/currency_code'
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+            minimum: 1900
+            maximum: 2019
+          description: 'Year in four digits format'
+        - in: path
+          name: month
+          required: true
+          schema:
+            type: integer
+          description: 'Month in numeric format. Acceptable values: 1 - 12.'
+        - $ref: '#/components/parameters/session'
+        - $ref: '#/components/parameters/quote'
+
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        204:
+          description: 'Result not found'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /base-rate:
+    get:
+      summary: 'Retrieve latest Base Rate from all financial institutions'
+      tags:
+        - 'Base Rate'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Latest Base Rate All Banks'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                      effective_date:
+                        type: string
+                        format: date
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        bank_code:
+                          type: string
+                          maximum: 4
+                        bank_name:
+                          type: string
+                          maximum: 125
+                        base_rate:
+                          type: number
+                          format: float
+                        base_financing_rate:
+                          type: number
+                          format: float
+                        indicative_eff_lending_rate:
+                          type: number
+                          format: float
+
+  /base-rate/{bank_code}:
+    get:
+      summary: 'Retrieve latest Base Rate from specified financial institution'
+      tags:
+        - 'Base Rate'
+      parameters:
+        - in: path
+          name: bank_code
+          required: true
+          schema:
+            type: string
+            maximum: 4
+          description: 'First 4 characters of SWIFT code'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Latest Base Rate All Banks'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                      effective_date:
+                        type: string
+                        format: date
+                  data:
+                    type: object
+                    properties:
+                      bank_code:
+                        type: string
+                        maximum: 4
+                      bank_name:
+                        type: string
+                        maximum: 125
+                      base_rate:
+                        type: number
+                        format: float
+                      base_financing_rate:
+                        type: number
+                        format: float
+                      indicative_eff_lending_rate:
+                        type: number
+                        format: float
+        404:
+          description: 'Result not found'
+
+  /consumer-alert:
+    get:
+      summary: 'Retrieve latest list of Financial Consumer Alert'
+      tags:
+        - 'Financial Consumer Alert'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        204:
+          description: 'Result not found'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /consumer-alert/{str}:
+    get:
+      summary: 'Search string in Financial Consumer Alert list'
+      tags:
+        - 'Financial Consumer Alert'
+      parameters:
+        - in: path
+          name: str
+          required: true
+          schema:
+            type: string
+
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        204:
+          description: 'Result not found'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /opr:
+    get:
+      summary: 'Retrieve latest OPR'
+      tags:
+        - 'Overnight Policy Rate (OPR)'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Latest OPR'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                  data:
+                    type: object
+                    properties:
+                      year:
+                        type: integer
+                        maximum: 4
+                      date:
+                        type: string
+                        format: date
+                      change_in_opr:
+                        type: number
+                        format: float
+                      new_opr_level:
+                        type: number
+                        format: float
+
+  /opr/{year}:
+    get:
+      summary: 'Retrieve OPR level based on given year'
+      tags:
+        - 'Overnight Policy Rate (OPR)'
+      parameters:
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+            maximum: 4
+          description: 'Year in numeric four digits'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Latest Base Rate All Banks'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        year:
+                          type: integer
+                          maximum: 4
+                        date:
+                          type: string
+                          format: date
+                        change_in_opr:
+                          type: number
+                          format: float
+                        new_opr_level:
+                          type: number
+                          format: float
+
+        404:
+          description: 'Result not found'
+
+  /usdmyr:
+    get:
+      summary: 'Retrieve latest USD/MYR reference rate'
+      tags:
+        - 'Kuala Lumpur USD/MYR Reference Rate'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'Latest USD/MYR reference rate'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                  data:
+                    type: object
+                    properties:
+                      date:
+                        type: string
+                        format: date
+                      rate:
+                        type: number
+                        format: float
+
+  /usdrmyr/date/{date}:
+    get:
+      summary: 'Retrieve latest USD/MYR Reference Rate based on given date'
+      tags:
+        - 'Kuala Lumpur USD/MYR Reference Rate'
+      parameters:
+        - in: path
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+          description: 'Date to retrieve in YYYY-MM-DD format'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'USD/MYR reference rate on given date'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                  data:
+                    type: object
+                    properties:
+                      date:
+                        type: string
+                        format: date
+                      rate:
+                        type: number
+                        format: float
+        404:
+          description: 'Result not found'
+
+  /usdrmyr/year/{year}/month/{month}:
+    get:
+      summary: 'Retrieve latest USD/MYR Reference Rate based on given month and year'
+      tags:
+        - 'Kuala Lumpur USD/MYR Reference Rate'
+      parameters:
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+            maximum: 4
+          description: 'Year in numeric four digits'
+        - in: path
+          name: month
+          required: true
+          schema:
+            type: integer
+            maximum: 2
+          description: 'Month in numeric two digits'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                title: 'USD/MYR reference rate on given month and year'
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      last_updated:
+                        type: string
+                        format: datetime
+                      count:
+                        type: integer
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          format: date
+                        rate:
+                          type: number
+                          format: float
+        404:
+          description: 'Result not found'
+
+components:
+  parameters:
+    currency_code:
+      name: currency_code
+      in: path
+      required: true
+      schema:
+        type: string
+        maximum: 3
+      description: '3 characters currency code based on ISO 4217 standard'
+    session:
+      name: session
+      in: query
+      schema:
+        type: string
+        format: time
+        enum:
+          - 0900
+          - 1130
+          - 1200
+          - 1700
+        default: 1130
+      description: 'Session of published rate. Rates at 1130 are the best rates offered by selected commercial banks.'
+    quote:
+      name: quote
+      in: query
+      schema:
+        type: integer
+        enum:
+          - 1
+          - 2
+        default: 1
+      description: 'Quotation for exchange rates. Acceptable values: 1 = Ringgit/Foreign Currency, 2 = Foreign Currency/Ringgit.'
+
+  schemas:
+    Response:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        query:
+          $ref: '#/components/schemas/Query'
+        data:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Currency'
+    Rate:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        buying_rate:
+          type : number
+          format: float
+        selling_rate:
+          type : number
+          format: float
+        middle_rate:
+          type : number
+          format: float
+    Currency:
+      type: object
+      properties:
+        currency_code:
+          type: string
+          maximum: 3
+        unit:
+          type: integer
+          enum:
+            - 1
+            - 100
+          default: 1
+        rate:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rate'
+    Query:
+      type: object
+      properties:
+        currency_code:
+          type: string
+          maximum: 3
+        date:
+          type: string
+          format: date
+        year:
+          type: integer
+        month:
+          type: integer
+    Meta:
+      type: object
+      properties:
+        last_updated:
+          type: string
+          format: datetime
+        session:
+          type: string
+          format: time
+        quote:
+          type: integer
+          enum:
+            - 1
+            - 2
+        total_result:
+          type: integer
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          maximum: 3
+        mesage:
+          type: string
+          maximum: 50
