@@ -1,16 +1,14 @@
 openapi: 3.0.1
 info:
-  title: 'Exchange Rates'
+  title: 'BNM Open API'
   version: '0.1-dev'
   description: ''
   contact:
     name: 'Khairul Fathi'
     email: 'khairulfathi@gmail.com'
 servers:
-  - url: 'https://api.sample.com'
+  - url: 'https://api.bnm.gov.my'
     description: 'Production server URL'
-  - url: 'https://api.test.sample.com'
-    description: 'Staging server URL'
 paths:
   /exchange-rate:
     get:
