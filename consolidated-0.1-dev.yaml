@@ -544,6 +544,86 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /fxturnover:
+    get:
+      summary: 'Retrieve latest FX Turnover'
+      tags:
+        - 'FX Turnover'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FXTurnoverResponse'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /fxturnover/date/{date}:
+    get:
+      summary: 'Retrieve latest FX Turnover based on given date'
+      tags:
+        - 'FX Turnover'
+      parameters:
+        - in: path
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+          description: 'Date to retrieve in YYYY-MM-DD format'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FXTurnoverResponse'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /fxturnover/year/{year}/month/{month}:
+    get:
+      summary: 'Retrieve latest FX Turnover based on given year and month'
+      tags:
+        - 'FX Turnover'
+      parameters:
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+            maximum: 4
+          description: 'Year in numeric four digits'
+        - in: path
+          name: month
+          required: true
+          schema:
+            type: integer
+            maximum: 2
+          description: 'Month in numeric two digits'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FXTurnoverResponse'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   parameters:
     currency_code:
@@ -696,3 +776,27 @@ components:
           type: number
           format: float
           description: '1 Year'
+
+    FXTurnoverResponse:
+      type: object
+      description: 'Daily foreign exchange turnover for all currencies including interbank and customer deals'
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/FXTurnover'
+
+    FXTurnover:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: 'Date of published'
+        total_sum:
+          type: number
+          format: double
+          description: 'Total sum of foreign exchange turnover in USD (billions)'
