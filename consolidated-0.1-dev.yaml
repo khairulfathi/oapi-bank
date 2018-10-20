@@ -822,6 +822,74 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /intrate:
+    get:
+      summary: 'Retrieve latest Interest Rates'
+      tags:
+        - 'Interest Rates and Volume'
+      parameters:
+        - $ref: '#/components/parameters/interest_product'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntRateResponse'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /intrate/date/{date}:
+    get:
+      summary: 'Retrieve latest Interest Rates based on given date'
+      tags:
+        - 'Interest Rates and Volume'
+      parameters:
+        - $ref: '#/components/parameters/interest_product'
+        - $ref: '#/components/parameters/date'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntRateResponse'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /intrate/year/{year}/month/{month}:
+    get:
+      summary: 'Retrieve latest Interest Rates based on given year and month'
+      tags:
+        - 'Interest Rates and Volume'
+      parameters:
+        - $ref: '#/components/parameters/interest_product'
+        - $ref: '#/components/parameters/year'
+        - $ref: '#/components/parameters/month'
+
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntRateResponse'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
 components:
   parameters:
     currency_code:
@@ -855,6 +923,42 @@ components:
           - 2
         default: 1
       description: 'Quotation for exchange rates. Acceptable values: 1 = Ringgit/Foreign Currency, 2 = Foreign Currency/Ringgit.'
+    interest_product:
+      name: product
+      in: query
+      schema:
+        type: integer
+        enum:
+          - 1
+          - 2
+          - 3
+          - 4
+        default: 1
+      description: 'Selection of interbank rates. Acceptable values: 1 = Money Market Operations, 2 = Interbank, 3 = Overall, 4 = All.'
+    date:
+      name: date
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date
+      description: 'Date to retrieve in YYYY-MM-DD format'
+    year:
+      name: year
+      in: path
+      required: true
+      schema:
+        type: integer
+        maximum: 4
+      description: 'Year in numeric four digits'
+    month:
+      name: month
+      in: path
+      required: true
+      schema:
+        type: integer
+        maximum: 2
+      description: 'Month in numeric two digits'
 
   schemas:
     Response:
@@ -1171,3 +1275,51 @@ components:
                 6_months:
                   type: number
                   format: double
+    IntRateResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/IntRate'
+    IntRate:
+      type: object
+      properties:
+        product:
+          type: integer
+          description: 'Selection of interbank rates. Acceptable values: 1 = Money Market Operations, 2 = Interbank, 3 = Overall.'
+          enum:
+            - 1
+            - 2
+            - 3
+        rate:
+          type: array
+          description: 'Interbank money market rates'
+          items:
+            type: object
+            properties:
+              date:
+                description: 'Date of published rates or transactions'
+                type: string
+                format: date
+              overnight:
+                type: number
+                format: double
+              1_week:
+                type: number
+                format: double
+              1_month:
+                type: number
+                format: double
+              3_months:
+                type: number
+                format: double
+              6_months:
+                type: number
+                format: double
+              1_year:
+                type: number
+                format: double
