@@ -784,6 +784,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /rmbfxfwd:
+    get:
+      summary: 'Retrieve latest Renminbi FX Forward Prices'
+      tags:
+        - 'Renminbi FX Forward Prices'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RMBFXFwd'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /rmbdarate:
+    get:
+      summary: 'Retrieve latest Renminbi Deposit Acceptance Rates'
+      tags:
+        - 'Renminbi FX Forward Prices'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RMBDARate'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   parameters:
     currency_code:
@@ -1040,3 +1078,96 @@ components:
           type: number
           format: double
           description: 'Lowest dealt rates by commercial banks on a specific date'
+    RMBFXFwd:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          type: object
+          properties:
+            date:
+              type: string
+              format: date
+              description: 'Date rates are effective'
+            selling:
+              type: object
+              description: 'Selling prices in RM'
+              properties:
+                spot:
+                  type: number
+                  format: double
+                2_weeks:
+                  type: number
+                  format: double
+                1_month:
+                  type: number
+                  format: double
+                2_months:
+                  type: number
+                  format: double
+                3_months:
+                  type: number
+                  format: double
+                4_months:
+                  type: number
+                  format: double
+                5_months:
+                  type: number
+                  format: double
+                6_months:
+                  type: number
+                  format: double
+            buying:
+              type: object
+              description: 'Buying prices in RM'
+              properties:
+                spot:
+                  type: number
+                  format: double
+                2_weeks:
+                  type: number
+                  format: double
+                1_month:
+                  type: number
+                  format: double
+                2_months:
+                  type: number
+                  format: double
+                3_months:
+                  type: number
+                  format: double
+                4_months:
+                  type: number
+                  format: double
+                5_months:
+                  type: number
+                  format: double
+                6_months:
+                  type: number
+                  format: double
+    RMBDARate:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          type: object
+          properties:
+            date:
+              type: string
+              format: date
+              description: 'Date rates are effective'
+            deposit:
+              type: object
+              description: 'Selling prices in RM'
+              properties:
+                1_month:
+                  type: number
+                  format: double
+                3_months:
+                  type: number
+                  format: double
+                6_months:
+                  type: number
+                  format: double
