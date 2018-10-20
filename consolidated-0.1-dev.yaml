@@ -250,8 +250,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Response'
-        204:
-          description: 'Result not found'
+
         default:
           description: 'Unexpected error'
           content:
@@ -465,6 +464,86 @@ paths:
         404:
           description: 'Result not found'
 
+  /iirate:
+    get:
+      summary: 'Retrieve latest Islamic Interbank Rate'
+      tags:
+        - 'Islamic Interbank Rate'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IIRateResponse'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /iirate/date/{date}:
+    get:
+      summary: 'Retrieve latest Islamic Interbank Rate based on given date'
+      tags:
+        - 'Islamic Interbank Rate'
+      parameters:
+        - in: path
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+          description: 'Date to retrieve in YYYY-MM-DD format'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IIRateResponse'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /iirate/year/{year}/month/{month}:
+    get:
+      summary: 'Retrieve latest Islamic Interbank Rate based on given month and year'
+      tags:
+        - 'Islamic Interbank Rate'
+      parameters:
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+            maximum: 4
+          description: 'Year in numeric four digits'
+        - in: path
+          name: month
+          required: true
+          schema:
+            type: integer
+            maximum: 2
+          description: 'Month in numeric two digits'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IIRateResponse'
+        default:
+          description: 'Unexpected error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   parameters:
     currency_code:
@@ -562,14 +641,6 @@ components:
         last_updated:
           type: string
           format: datetime
-        session:
-          type: string
-          format: time
-        quote:
-          type: integer
-          enum:
-            - 1
-            - 2
         total_result:
           type: integer
     Error:
@@ -581,3 +652,47 @@ components:
         mesage:
           type: string
           maximum: 50
+
+    IIRateResponse:
+      type: object
+      description: 'Daily weighted average of Islamic interbank deposit rates for various tenures'
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/IIRate'
+
+    IIRate:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: 'Date of published rate'
+        overnight:
+          type: number
+          format: float
+          description: 'Overnight'
+        1_week:
+          type: number
+          format: float
+          description: '1 Week'
+        1_month:
+          type: number
+          format: float
+          description: '1 Month'
+        3_month:
+          type: number
+          format: float
+          description: '3 Months'
+        6_month:
+          type: number
+          format: float
+          description: '6 Months'
+        1_year:
+          type: number
+          format: float
+          description: '1 Year'
